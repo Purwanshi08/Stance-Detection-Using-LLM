@@ -61,3 +61,23 @@ print(embeddings.shape)
 
 print("\nFirst embedding:")
 print(embeddings[0])
+
+import numpy as np
+import os
+
+# Convert embeddings to float32
+embeddings = np.asarray(
+    embeddings,
+    dtype="float32"
+)
+
+# Create results directory if it doesn't exist
+os.makedirs("../results", exist_ok=True)
+
+# Save embeddings
+np.save(
+    "../results/train_embeddings.npy",
+    embeddings
+)
+
+print("\nEmbeddings saved successfully.")
