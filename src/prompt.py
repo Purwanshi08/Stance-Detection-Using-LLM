@@ -61,11 +61,10 @@ Here are some examples:
 
     Use the retrieved examples above as guidance, but classify the NEW TWEET itself.
 
-    Return your answer in exactly this format:
+    You MUST provide both lines below. Do NOT skip the Explanation line.
 
     Stance: <FAVOR/AGAINST/NONE>
-
-    Explanation: <brief explanation based on the NEW TWEET and the target>
+    Explanation: <one or two sentences explaining your decision>
     """
 
     return prompt

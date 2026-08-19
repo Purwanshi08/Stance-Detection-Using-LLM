@@ -1,0 +1,21 @@
+# Environments
+.env
+.env.example
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data and results
+data/
+results/
+
+# Jupyter Notebook
+.ipynb_checkpoints

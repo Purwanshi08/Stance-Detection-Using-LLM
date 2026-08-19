@@ -6,6 +6,7 @@ import pandas as pd
 
 from mmr_retrieval import retrieve_mmr_examples
 from prompt import create_prompt
+from llm import get_stance
 
 
 # ==========================================
@@ -23,7 +24,7 @@ test_df = pd.read_csv(
 # DEVELOPMENT MODE
 # ==========================================
 
-test_sample = test_df.head(1)
+test_sample = test_df.head(5)
 
 
 # ==========================================
@@ -84,3 +85,19 @@ for _, row in test_sample.iterrows():
             "ignore"
         ).decode("ascii")
     )
+
+    # ======================================
+    # CALL LLM
+    # ======================================
+
+    result = get_stance(prompt)
+
+    print("\n")
+    print("=" * 80)
+    print("LLM RESULT")
+    print("=" * 80)
+
+    print(f"Target:  {target}")
+    print(f"Tweet:   {tweet}")
+    print(f"Stance:  {result['stance']}")
+    print(f"Explanation: {result['explanation']}")
