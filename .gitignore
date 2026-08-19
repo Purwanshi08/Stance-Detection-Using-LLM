@@ -19,3 +19,6 @@ results/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# PDFs
+PromptAugmentationStance.pdf
