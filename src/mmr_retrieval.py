@@ -343,3 +343,85 @@ def retrieve_mmr_examples(
     return train_df.iloc[
         selected_indices
     ]
+
+
+# ==========================================
+# RANDOM RETRIEVAL (SDPStan-R)
+# ==========================================
+
+def retrieve_random_examples(
+    tweet,
+    target,
+    final_k=3
+):
+
+    same_target = train_df[
+        train_df["Target"] == target
+    ]
+
+    if len(same_target) == 0:
+        return train_df.iloc[[]]
+
+    sampled = same_target.sample(
+        n=min(final_k, len(same_target)),
+        random_state=None
+    )
+
+    return sampled
+
+
+# ==========================================
+# TOP-K SIMILARITY RETRIEVAL (SDPStan-S)
+# ==========================================
+
+def retrieve_topk_examples(
+    tweet,
+    target,
+    faiss_k=100,
+    final_k=3
+):
+
+    query_text = (
+        "Target: "
+        + target
+        + " Tweet: "
+        + tweet
+    )
+
+    query_embedding = model.encode(
+        [query_text]
+    )[0]
+
+    query_embedding = np.asarray(
+        query_embedding,
+        dtype="float32"
+    )
+
+    query_embedding /= np.linalg.norm(
+        query_embedding
+    )
+
+    scores, indices = index.search(
+        query_embedding.reshape(1, -1),
+        faiss_k
+    )
+
+    faiss_indices = indices[0]
+
+    candidate_indices = [
+        idx
+        for idx in faiss_indices
+        if idx >= 0
+        and train_df.iloc[idx]["Target"] == target
+    ]
+
+    candidate_indices = list(
+        dict.fromkeys(candidate_indices)
+    )
+
+    if len(candidate_indices) == 0:
+        return train_df.iloc[[]]
+
+    selected = candidate_indices[:final_k]
+
+    return train_df.iloc[selected]
