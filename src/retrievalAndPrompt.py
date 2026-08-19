@@ -24,7 +24,7 @@ test_df = pd.read_csv(
 # DEVELOPMENT MODE
 # ==========================================
 
-test_sample = test_df.head(5)
+test_sample = test_df.head(1)
 
 
 # ==========================================

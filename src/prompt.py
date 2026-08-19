@@ -64,7 +64,7 @@ Here are some examples:
     You MUST provide both lines below. Do NOT skip the Explanation line.
 
     Stance: <FAVOR/AGAINST/NONE>
-    Explanation: <one or two sentences explaining your decision>
+    Explanation: <2-3 sentences explaining why>
     """
 
     return prompt

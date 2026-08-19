@@ -41,12 +41,21 @@ model = SentenceTransformer(
 
 
 # ==========================================
-# NEW TWEET
+# LOAD TEST DATA
 # ==========================================
 
-target = "Climate Change is a Real Concern"
+test_path = "../data/testdata-taskA-all-annotations.txt"
 
-tweet = "Scientists have provided enough evidence."
+test_df = pd.read_csv(
+    test_path,
+    sep="\t",
+    encoding="latin1"
+)
+
+test_row = test_df.iloc[0]
+
+target = test_row["Target"]
+tweet = test_row["Tweet"]
 
 
 query_text = (
