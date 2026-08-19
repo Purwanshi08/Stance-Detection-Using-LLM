@@ -22,69 +22,50 @@ Here are some examples:
 """
 
     # Add the retrieved examples
+    prompt += """
+    The following examples were retrieved because they are
+    semantically relevant to the NEW TWEET. They are provided
+    as in-context examples to help determine the stance.
+
+    """
+
     for i, (_, row) in enumerate(
         examples.iterrows(),
         start=1
     ):
-
         prompt += f"""
-Example {i}:
+    Example {i}:
 
-Tweet:
-{row["Tweet"]}
+    Tweet:
+    {row["Tweet"]}
 
-Stance:
-{row["Stance"]}
-
+    Stance:
+    {row["Stance"]}
 """
 
-    # Add the query tweet
+# Add the query/test tweet
     prompt += f"""
-Now classify the following tweet with respect to the target.
+    Now classify the following NEW TWEET with respect to the target.
 
-Tweet:
-{tweet}
+    Target:
+    {target}
 
-Determine whether the tweet expresses:
+    NEW TWEET:
+    {tweet}
 
-- FAVOR: supports the target
-- AGAINST: opposes the target
-- NONE: does not clearly express a stance toward the target
+    Determine whether the NEW TWEET expresses:
 
-Return your answer in exactly this format:
+    - FAVOR: supports the target
+    - AGAINST: opposes the target
+    - NONE: does not clearly express a stance toward the target
 
-Stance: <FAVOR/AGAINST/NONE>
+    Use the retrieved examples above as guidance, but classify the NEW TWEET itself.
 
-Explanation: <brief explanation based on the tweet and target>
-"""
+    Return your answer in exactly this format:
+
+    Stance: <FAVOR/AGAINST/NONE>
+
+    Explanation: <brief explanation based on the NEW TWEET and the target>
+    """
 
     return prompt
-
-if __name__ == "__main__":
-
-    import pandas as pd
-
-    # Load training data
-    train_df = pd.read_csv(
-        "../data/trainingdata-all-annotations.txt",
-        sep="\t",
-        encoding="latin1"
-    )
-
-    # Temporary test examples
-    examples = train_df[
-        train_df["Target"] ==
-        "Climate Change is a Real Concern"
-    ].head(3)
-
-    tweet = "Scientists have provided enough evidence."
-
-    target = "Climate Change is a Real Concern"
-
-    prompt = create_prompt(
-        tweet,
-        target,
-        examples
-    )
-
-    print(prompt.encode('ascii', 'ignore').decode('ascii'))
