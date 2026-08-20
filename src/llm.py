@@ -1,25 +1,27 @@
 """
-Module for interacting with Google Gemini LLM for stance classification.
+Module for interacting with OpenCode Go LLM for stance classification.
 """
 import os
 import re
 import time
 from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+from openai import OpenAI
 
 load_dotenv()
 
-api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
     raise ValueError(
-        "Set GOOGLE_API_KEY or GEMINI_API_KEY in your .env file or environment."
+        "Set OPENAI_API_KEY in your .env file or environment."
     )
 
-client = genai.Client(api_key=api_key)
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://opencode.ai/zen/go/v1"
+)
 
-MODEL = "gemini-3.5-flash"
+MODEL = "deepseek-v4-flash"
 
 SYSTEM_INSTRUCTION = """You are an expert stance detection system.
 
@@ -37,22 +39,22 @@ Line 2: Explanation: <2-3 sentences citing specific words from the tweet and exp
 
 def get_stance(prompt, max_retries=3):
     """
-    Send the prompt to Gemini and parse stance + explanation.
+    Send the prompt to OpenAI and parse stance + explanation.
     Returns: {"stance": "FAVOR|AGAINST|NONE", "explanation": "..."}
     """
     for attempt in range(max_retries):
         try:
-            chat = client.chats.create(
+            response = client.chat.completions.create(
                 model=MODEL,
-                config=types.GenerateContentConfig(
-                    system_instruction=SYSTEM_INSTRUCTION,
-                    temperature=0.1,
-                    max_output_tokens=500,
-                ),
+                messages=[
+                    {"role": "system", "content": SYSTEM_INSTRUCTION},
+                    {"role": "user", "content": prompt},
+                ],
+                temperature=0.1,
+                max_tokens=500,
             )
 
-            response = chat.send_message(prompt)
-            text = response.text.strip()
+            text = response.choices[0].message.content.strip()
 
             stance = "NONE"
             explanation = ""

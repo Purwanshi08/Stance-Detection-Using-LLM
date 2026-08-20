@@ -4,6 +4,8 @@ Compare 3 prompt augmentation methods for stance detection:
 2. SDPStan-S  — Similarity-based (top-k FAISS)
 3. Our Method — FAISS + MMR (diversity-aware)
 """
+import sys
+import io
 import time
 import pandas as pd
 from sklearn.metrics import (
@@ -11,6 +13,15 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
 )
+
+# Suppress verbose output from retrieval functions
+class SuppressOutput:
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = io.StringIO()
+        return self
+    def __exit__(self, *args):
+        sys.stdout = self._original_stdout
 
 from mmr_retrieval import (
     retrieve_random_examples,
@@ -25,7 +36,7 @@ from llm import get_stance
 # CONFIG
 # ==========================================
 
-NUM_TWEETS = 5
+NUM_TWEETS = 50
 FINAL_K = 3
 LABELS = ["FAVOR", "AGAINST", "NONE"]
 
@@ -102,7 +113,8 @@ for i, (_, row) in enumerate(
 
     for name, method_fn in METHODS.items():
 
-        result = method_fn(tweet, target)
+        with SuppressOutput():
+            result = method_fn(tweet, target)
         predicted = result["stance"]
         correct = predicted == true_stance
 
@@ -116,7 +128,7 @@ for i, (_, row) in enumerate(
             "Correct": correct,
         })
 
-        time.sleep(13)
+        time.sleep(2)
 
     # Print progress summary for this tweet
     statuses = []

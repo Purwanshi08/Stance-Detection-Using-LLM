@@ -16,9 +16,17 @@ __pycache__/
 # Data and results
 data/
 results/
+report/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+colab_eval.ipynb
+colab_compare_200.ipynb
+demo_three_methods.py
+evaluate_mmr.py
+evaluate.py
+compare_200.py
+compare_methods.py
 
 # PDFs
 PromptAugmentationStance.pdf
